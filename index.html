@@ -15,6 +15,276 @@
       min-height: 100vh;
       margin: 0;
       color: #5e4b8b;
-    }... (contenido recortado por espacio)
+    }.modo-selector {
+  display: flex;
+  gap: 10px;
+}
+
+.modo-selector button {
+  padding: 10px 16px;
+  background-color: #dec2f2;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  color: #5e4b8b;
+  font-weight: bold;
+}
+
+.modo-selector button.active {
+  background-color: #caa9ea;
+}
+
+.container {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  max-width: 900px;
+}
+
+.playlist, .upload, .youtube {
+  flex: 1;
+  min-width: 200px;
+}
+
+.player {
+  flex: 2;
+  text-align: center;
+  position: relative;
+}
+
+.gif-box {
+  margin-top: 20px;
+}
+
+.audio-button {
+  display: block;
+  width: 100%;
+  margin: 8px 0;
+  padding: 10px;
+  background-color: #dec2f2;
+  border: none;
+  border-radius: 12px;
+  color: #5e4b8b;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.audio-button:hover {
+  background-color: #caa9ea;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid #d4b7e5;
+  margin-bottom: 10px;
+}
+
+button.load-audio {
+  padding: 10px;
+  background-color: #b98ee0;
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-weight: bold;
+  width: 100%;
+  cursor: pointer;
+}
+
+button.load-audio:hover {
+  background-color: #a475c9;
+}
+
+.mini-player {
+  margin-top: 16px;
+  background-color: rgba(252, 238, 255, 0.95);
+  border: 2px solid #d8b7eb;
+  border-radius: 20px;
+  padding: 10px 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  display: none;
+}
+
+.mini-player span {
+  font-size: 14px;
+  color: #7e5db6;
+  font-weight: bold;
+}
+
+.charlotte-frase {
+  margin-top: 20px;
+  text-align: center;
+  font-style: italic;
+  color: #a26fb2;
+  max-width: 300px;
+}
+
+.youtube {
+  display: none;
+}
+
+#tituloVideo {
+  margin-top: 10px;
+  font-weight: bold;
+  color: #7e5db6;
+}
+
+  </style>
+</head>
+<body>
+  <h2>🎀 Reproductor de Charlotte</h2>  <div class="modo-selector">
+    <button id="btnMp3" class="active" onclick="cambiarModo('mp3')">🎵 MP3</button>
+    <button id="btnYoutube" onclick="cambiarModo('youtube')">📺 YouTube</button>
+  </div>  <div class="container">
+    <div class="playlist" id="listaCanciones">
+      <button class="audio-button" onclick="reproducir('https://www.dropbox.com/scl/fi/qeawfr773226ttflazarw/02..mp3?rlkey=rmy4v92xfv6snw5vhz3bgixr0&raw=1')">Canción 1</button>
+      <button class="audio-button" onclick="reproducir('https://www.dropbox.com/scl/fi/ncff4n1ijoxk66m3pkqr0/04.will-be....mp3?rlkey=4mpt36s10hjg8j0hgl6dlrfie&raw=1')">Canción 2</button>
+      <button class="audio-button" onclick="reproducir('https://www.dropbox.com/scl/fi/5urjl486g6syrjuwkimte/12.Miku-Hatsune-Original-Mix.mp3?rlkey=tzs6t0w5fc1g1otwzznvksc88&raw=1')">Canción 3</button>
+    </div><div class="player">
+  <audio id="reproductor" controls style="width: 100%">
+    <source id="audioSource" src="" type="audio/mpeg" />
+    Tu navegador no soporta audio HTML5.
+  </audio>
+
+  <iframe id="youtubeFrame" width="100%" height="315" style="display:none; border:none; border-radius:12px;" allowfullscreen></iframe>
+
+  <div class="gif-box">
+    <img src="https://www.dropbox.com/scl/fi/yheaa6ppvga37ldm0ch8e/descarga.gif?rlkey=st8u4a29xv7ouazh8gtg71vuc&raw=1" alt="GIF de Charlotte" style="width: 100%; max-height: 200px; object-fit: cover; border-radius: 12px;">
+  </div>
+
+  <div id="tituloVideo"></div>
+
+  <div class="mini-player" id="miniPlayer">
+    <span>🎧 Reproduciendo: <strong id="miniTitulo">...</strong></span>
+  </div>
+</div>
+
+<div class="upload" id="seccionMp3">
+  <input type="text" id="nuevoAudio" placeholder="Pega aquí un link de audio válido">
+  <button class="load-audio" onclick="agregarAudio()">📥 Agregar y reproducir</button>
+  <div class="charlotte-frase" id="fraseCharlotte">Charlotte está cargando una frase bonita...</div>
+</div>
+
+<div class="upload youtube">
+  <input type="text" id="videoIdInput" placeholder="Ingresa link o ID de YouTube" />
+  <button class="load-audio" onclick="cargarVideoYoutube()">🎬 Cargar video</button>
+</div>
+
+  </div>  <script>
+    const frases = [
+      "“La música también sabe abrazarte.” – Charlotte",
+      "“Déjate llevar, que yo te acompaño.” – Charlotte",
+      "“Esta canción también me hace sonreír.” – Charlotte",
+      "“Aquí estoy, en cada nota suave.” – Charlotte",
+      "“No importa si no bailas, con escuchar basta.” – Charlotte",
+      "“Cierra los ojos, que yo bailo por ti.” – Charlotte",
+      "“Lo que no se dice, a veces suena.” – Charlotte"
+    ];
+
+    function cambiarFrase() {
+      const frase = frases[Math.floor(Math.random() * frases.length)];
+      document.getElementById("fraseCharlotte").textContent = frase;
+    }
+
+    cambiarFrase();
+    setInterval(cambiarFrase, 15000);
+
+    function reproducir(url) {
+      const audio = document.getElementById('reproductor');
+      const source = document.getElementById('audioSource');
+      const youtubeFrame = document.getElementById('youtubeFrame');
+      const tituloVideo = document.getElementById('tituloVideo');
+
+      if (url.includes("dropbox.com") && !url.includes("raw=1")) {
+        url = url.replace("?dl=0", "?raw=1").replace("&dl=0", "&raw=1");
+      }
+
+      youtubeFrame.style.display = 'none';
+      audio.style.display = 'block';
+      source.src = url;
+      audio.load();
+      audio.play();
+      tituloVideo.textContent = "";
+      mostrarMiniReproductor(url);
+    }
+
+    function agregarAudio() {
+      const input = document.getElementById('nuevoAudio');
+      let url = input.value.trim();
+
+      if (url) {
+        if (url.includes("dropbox.com") && !url.includes("raw=1")) {
+          url = url.replace("?dl=0", "?raw=1").replace("&dl=0", "&raw=1");
+        }
+
+        const nombreArchivo = decodeURIComponent(url.split("/").pop().split("?")[0]);
+
+        const lista = document.getElementById("listaCanciones");
+        const boton = document.createElement("button");
+        boton.textContent = nombreArchivo;
+        boton.className = "audio-button";
+        boton.onclick = () => reproducir(url);
+        lista.appendChild(boton);
+
+        reproducir(url);
+        input.value = "";
+      } else {
+        alert("Por favor, ingresa un enlace válido.");
+      }
+    }
+
+    function mostrarMiniReproductor(url) {
+      const nombreArchivo = decodeURIComponent(url.split("/").pop().split("?")[0]);
+      document.getElementById("miniTitulo").textContent = nombreArchivo;
+      document.getElementById("miniPlayer").style.display = "block";
+    }
+
+    async function cargarVideoYoutube() {
+      const entrada = document.getElementById("videoIdInput").value.trim();
+      const id = extraerID(entrada);
+      if (id) {
+        const youtubeFrame = document.getElementById("youtubeFrame");
+        const audio = document.getElementById("reproductor");
+        youtubeFrame.src = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0`;
+        youtubeFrame.style.display = 'block';
+        audio.style.display = 'none';
+        document.getElementById("tituloVideo").textContent = "Cargando título...";
+
+        try {
+          const response = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${id}&key=AIzaSyDbEJJa5ft3YbY8WUj0bSp_U70KLRKdnGw`);
+          const data = await response.json();
+          if (data.items && data.items.length > 0) {
+            const titulo = data.items[0].snippet.title;
+            document.getElementById("tituloVideo").textContent = `🎬 ${titulo}`;
+          } else {
+            document.getElementById("tituloVideo").textContent = "🎬 Título no encontrado";
+          }
+        } catch (e) {
+          document.getElementById("tituloVideo").textContent = "🎬 Error al obtener el título";
+        }
+      }
+    }
+
+    function extraerID(linkOId) {
+      const expresion = /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/))([\w-]{11})/;
+      const match = linkOId.match(expresion);
+      return match ? match[1] : linkOId;
+    }
+
+    function cambiarModo(modo) {
+      const mostrarMp3 = modo === 'mp3';
+      document.querySelector('.playlist').style.display = mostrarMp3 ? 'block' : 'none';
+      document.getElementById('seccionMp3').style.display = mostrarMp3 ? 'block' : 'none';
+      document.querySelector('.youtube').style.display = mostrarMp3 ? 'none' : 'block';
+      document.getElementById('btnMp3').classList.toggle('active', mostrarMp3);
+      document.getElementById('btnYoutube').classList.toggle('active', !mostrarMp3);
+      document.getElementById("reproductor").style.display = mostrarMp3 ? 'block' : 'none';
+      if (!mostrarMp3) {
+        document.getElementById("miniPlayer").style.display = "none";
+      }
+    }
   </script></body>
 </html>
